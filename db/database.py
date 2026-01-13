@@ -19,3 +19,14 @@ class Database:
             raise ValueError("Table does not exist")
         return self.tables[table_name].rows
 
+    def join_tables(self, table1, table2, key1, key2):
+        t1 = self.tables[table1]
+        t2 = self.tables[table2]
+        result = []
+        for row1 in t1.rows:
+            for row2 in t2.rows:
+                if row1[key1] == row2[key2]:
+                    combined = {**row1, **row2}
+                    result.append(combined)
+        return result
+

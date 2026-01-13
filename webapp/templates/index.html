@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Todo App</title>
+</head>
+<body>
+    <h1>Todo App</h1>
+    <form method="post">
+        <input type="text" name="task" placeholder="Enter task" required>
+        <button type="submit">Add</button>
+    </form>
+    <ul>
+        {% for todo in todos %}
+            <li>{{ todo['id'] }} - {{ todo['task'] }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

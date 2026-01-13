@@ -33,6 +33,24 @@ def parse_insert(cmd):
     db.insert(table_name, row)
     print("Row inserted")
 
+def parse_join(cmd):
+    # Example: JOIN users orders ON id = user_id;
+    cmd = cmd.replace("JOIN", "").strip().rstrip(";")
+
+    tables_part, condition_part = cmd.split("ON")
+
+    table1, table2 = tables_part.strip().split()
+
+    col1, col2 = condition_part.strip().split("=")
+    col1 = col1.strip()
+    col2 = col2.strip()
+
+    results = db.join_tables(table1, table2, col1, col2)
+
+    for r in results:
+        print(r)
+
+
 def repl():
     while True:
         cmd = input("> ")
@@ -47,6 +65,8 @@ def repl():
             rows = db.select_all(table_name)
             for r in rows:
                 print(r)
+        elif cmd.startswith("JOIN"):
+            parse_join(cmd)
         else:
             print("Unknown command")
 

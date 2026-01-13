@@ -25,8 +25,8 @@ def parse_insert(cmd):
     cmd = cmd.replace("INSERT INTO", "").strip()
     table_part, values_part = cmd.split("VALUES")
     table_name = table_part.split("(")[0].strip()
-    cols = table_part.split("(")[1].rstrip(")").split(",")
-    cols = [c.strip() for c in cols]
+    cols = table_part.split("(")[1].rstrip(");").split(",")
+    cols = [c.strip().replace(")", "") for c in cols]
     vals = values_part.strip().lstrip("(").rstrip(");").split(",")
     vals = [v.strip().strip('"') for v in vals]
     row = dict(zip(cols, vals))
@@ -65,8 +65,40 @@ def repl():
             rows = db.select_all(table_name)
             for r in rows:
                 print(r)
+        elif cmd.startswith("DELETE FROM"):
+            # Example: DELETE FROM users WHERE id = 1;
+            table_part, where_part = cmd.replace("DELETE FROM", "").strip().split("WHERE")
+            table_name = table_part.strip()
+            col, val = where_part.strip().split("=")
+            col = col.strip()
+            val = val.strip().strip('"')
+            db.delete(table_name, col, val)
+            print("Row deleted")
+
+        elif cmd.startswith("UPDATE"):
+            # Example: UPDATE users SET name="John" WHERE id=1;
+            cmd = cmd.replace("UPDATE", "").strip().rstrip(";")
+            table_part, rest = cmd.split("SET")
+            table_name = table_part.strip()
+            set_part, where_part = rest.split("WHERE")
+            
+            # parse SET clause
+            updates = {}
+            for assignment in set_part.strip().split(","):
+                col, val = assignment.split("=")
+                updates[col.strip()] = val.strip().strip('"')
+            
+            # parse WHERE clause
+            key_col, key_val = where_part.strip().split("=")
+            key_col = key_col.strip()
+            key_val = key_val.strip().strip('"')
+            
+            db.update(table_name, key_col, key_val, updates)
+            print("Row updated")
+
         elif cmd.startswith("JOIN"):
             parse_join(cmd)
+
         else:
             print("Unknown command")
 

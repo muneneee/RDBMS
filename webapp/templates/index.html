@@ -5,13 +5,28 @@
 </head>
 <body>
     <h1>Todo App</h1>
+
+    <!-- Add new task -->
     <form method="post">
         <input type="text" name="task" placeholder="Enter task" required>
         <button type="submit">Add</button>
     </form>
+
     <ul>
         {% for todo in todos %}
-            <li>{{ todo['id'] }} - {{ todo['task'] }}</li>
+            <li>
+                {{ todo['id'] }} - {{ todo['task'] }}
+                
+                <!-- Delete button -->
+                <a href="/delete/{{ todo['id'] }}">Delete</a>
+
+                <!-- Update form -->
+                <form method="post" action="/update/{{ todo['id'] }}" style="display:inline;">
+                    <input type="text" name="task" placeholder="Update task" required>
+                    <button type="submit">Update</button>
+                </form>
+                <br></br>
+            </li>
         {% endfor %}
     </ul>
 </body>

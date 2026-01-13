@@ -1,4 +1,5 @@
 from .table import Table, Column
+import json 
 
 class Database:
     def __init__(self):
@@ -19,6 +20,38 @@ class Database:
             raise ValueError("Table does not exist")
         return self.tables[table_name].rows
 
+    def update(self, table_name, key_col, key_val, updates):
+        """
+        Update rows in table_name where key_col == key_val
+        updates = dict of column: new_value
+        """
+        if table_name not in self.tables:
+            raise ValueError("Table does not exist")
+        
+        table = self.tables[table_name]
+        
+        for row in table.rows:
+            if row.get(key_col) == key_val:
+                for col, val in updates.items():
+                    row[col] = val
+
+    def delete(self, table_name, key_col, key_val):
+        if table_name not in self.tables:
+            raise ValueError("Table does not exist")
+        table = self.tables[table_name]
+        new_rows = []
+        for row in table.rows:
+            if row.get(key_col) != key_val:
+                new_rows.append(row)
+            else:
+                # Remove from primary/unique index if necessary
+                for col in table.columns:
+                    if col.primary and col.name == key_col:
+                        table.pk_index.pop(key_val, None)
+                    if col.unique and col.name == key_col:
+                        table.unique_index.pop(key_val, None)
+        table.rows = new_rows
+
     def join_tables(self, table1, table2, key1, key2):
         t1 = self.tables[table1]
         t2 = self.tables[table2]
@@ -29,4 +62,3 @@ class Database:
                     combined = {**row1, **row2}
                     result.append(combined)
         return result
-

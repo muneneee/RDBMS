@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect
 from db.database import Database
 from db.table import Column
 
@@ -16,6 +16,18 @@ def index():
         db.insert("todos", {"id": id, "task": task})
     todos = db.select_all("todos")
     return render_template("index.html", todos=todos)
+
+@app.route("/delete/<int:id>")
+def delete(id):
+    db.delete("todos", "id", id)
+    return redirect("/")
+
+@app.route("/update/<int:id>", methods=["POST"])
+def update(id):
+    new_task = request.form["task"]
+    db.update("todos", "id", id, {"task": new_task})
+    return redirect("/")
+
 
 if __name__ == "__main__":
     app.run(debug=True)

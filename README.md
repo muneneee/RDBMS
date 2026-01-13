@@ -31,7 +31,7 @@ A simple Todo web app built on a **custom in-memory RDBMS** demonstrating **full
 ## Installation
 
 ```bash
-git clone <your-repo-url>
+git clone [(https://github.com/muneneee/RDBMS.git)]
 cd RDBMS
 python -m venv venv
 source venv/bin/activate   # Windows: venv\Scripts\activate
